@@ -3,6 +3,7 @@
 
 #define NUM_SPECIALTIES 4
 #define NUM_WARDS 4
+#define MAX_PATIENTS 100
 
 char specialtyName [NUM_SPECIALTIES][50]= {"General Practice (OPD)","Paediatrics","Cardiology","Neurology"};
 int consultationFee[NUM_SPECIALTIES] = {1500,2500,4500,5000};
@@ -15,9 +16,19 @@ int totalBedCap [NUM_WARDS]={20,10,10,5};
 
 int bedOccupancy [NUM_WARDS][20];
 
+char patientName [MAX_PATIENTS][50];
+int patientAge [MAX_PATIENTS];
+int urgencyLevel[MAX_PATIENTS];
+int specialtyID [MAX_PATIENTS];
+int admitted [MAX_PATIENTS];
+int wardID[MAX_PATIENTS];
+int daysAdmitted[MAX_PATIENTS];
+int patientCount = 0;
+
 int main()
 
 {
     printf("Smart Hospital & Resource Allocation System\n");
     return 0;
 }
+
