@@ -6,6 +6,8 @@
 #define MAX_PATIENTS 100
 //Prototypes
 void registerPatient();
+void allocateBed();
+
 
 //Arrays
 char specialtyName [NUM_SPECIALTIES][50]= {"General Practice (OPD)","Paediatrics","Cardiology","Neurology"};
@@ -25,10 +27,11 @@ int urgencyLevel[MAX_PATIENTS];
 int specialtyID [MAX_PATIENTS];
 int admitted [MAX_PATIENTS];
 int wardID[MAX_PATIENTS];
+int bedID[MAX_PATIENTS];
 int daysAdmitted[MAX_PATIENTS];
 int patientCount = 0;
 
-
+//registration Function
 void registerPatient()
 {
     if (patientCount>= MAX_PATIENTS)
@@ -99,9 +102,44 @@ void registerPatient()
 
     while (getchar()!= '\n');
 
+    if (admitted[patientCount]==1)
+    {
+        allocateBed();
+    }
+
     patientCount++;
 
 }
+
+//Bed allocate function
+void allocateBed()
+{
+    int wardIndex = wardID[patientCount] - 1;
+    int bedIndex;
+    int bedFound = 0;
+
+    for (bedIndex =0;bedIndex < totalBedCap[wardIndex];bedIndex++)
+    {
+        if(bedOccupancy[wardIndex][bedIndex]==0)
+        {
+            bedOccupancy[wardIndex][bedIndex] = 1;
+            bedID[patientCount]= bedIndex + 1;
+            bedFound = 1;
+            break;
+
+        }
+
+    }
+    if (bedFound== 0)
+    {
+        printf("No Beds Available in the Selected Ward!\n");
+    }
+
+
+}
+
+
+
 
 int main()
 
