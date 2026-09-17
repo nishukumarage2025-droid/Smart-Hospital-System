@@ -34,6 +34,12 @@ int admitted [MAX_PATIENTS];
 int wardID[MAX_PATIENTS];
 int bedID[MAX_PATIENTS];
 int daysAdmitted[MAX_PATIENTS];
+int wardCost[MAX_PATIENTS];
+int baseFee[MAX_PATIENTS];
+int surCharge[MAX_PATIENTS];
+int grossTotal[MAX_PATIENTS];
+int discount[MAX_PATIENTS];
+int finalBill[MAX_PATIENTS];
 int patientCount = 0;
 
 //registration Function
@@ -71,7 +77,10 @@ void registerPatient()
         scanf("%d",&specialtyID[patientCount]);
     }
 
+
+    //waiting time and queue
     waitingTime[patientCount]= specialtyQueue[specialtyID[patientCount]-1] * consultationTime[specialtyID[patientCount]-1];
+
     specialtyQueue[specialtyID[patientCount]-1]++;
 
     printf("Is the patient admitted? (1-Yes,0-No): ");
@@ -108,6 +117,48 @@ void registerPatient()
         wardID[patientCount]=0;
         daysAdmitted[patientCount]=0;
     }
+
+    //base fee calculation
+    baseFee[patientCount] = consultationFee[specialtyID[patientCount]-1];
+
+    //Surcharge calculation
+    if(urgencyLevel[patientCount]== 1)
+    {
+        surCharge[patientCount]= 0;
+    }
+    else if (urgencyLevel[patientCount]== 2)
+    {
+        surCharge[patientCount]= baseFee[patientCount]*20/100;
+    }
+    else
+    {
+        surCharge[patientCount]= baseFee[patientCount]*50/100;
+    }
+
+    //Ward cost calculation
+    if (admitted[patientCount]==1)
+    {
+        wardCost[patientCount]= daysAdmitted[patientCount] * dailyBedRate[wardID[patientCount]-1];
+    }
+    else
+    {
+        wardCost[patientCount]=0;
+    }
+    //Gross Total calculation
+    grossTotal[patientCount] = baseFee[patientCount] + surCharge[patientCount]+wardCost[patientCount];
+
+    //Age subsidy
+    if (patientAge[patientCount]< 5 || patientAge[patientCount]> 65)
+    {
+        discount[patientCount]= grossTotal[patientCount]*15/100;
+    }
+    else
+    {
+        discount[patientCount]=0;
+    }
+
+    //Final bill calculation
+    finalBill[patientCount]= grossTotal[patientCount]- discount[patientCount];
 
     while (getchar()!= '\n');
 
@@ -165,6 +216,13 @@ void displayPatients()
         printf("Age          : %d\n",patientAge[i]);
         printf("Urgency Level: %d\n",urgencyLevel[i]);
         printf("Waiting Time : %d minutes\n",waitingTime[i]);
+        printf("Base Fee     : Rs. %d\n",baseFee[i]);
+        printf("Surcharge Fee: Rs. %d\n",surCharge[i]);
+        printf("Ward Cost Fee: Rs. %d\n",wardCost[i]);
+        printf("Gross Total  : Rs. %d\n",grossTotal[i]);
+        printf("Discount     : Rs. %d\n",discount[i]);
+        printf("Final Bill   : Rs. %d\n",finalBill[i]);
+
         printf("Specialty    : %s\n",specialtyName[specialtyID[i]-1]);
         printf("Admitted     : %d\n",admitted[i]);
 
@@ -179,7 +237,7 @@ void displayPatients()
     }
 }
 
-
+//main
 int main()
 
 {
