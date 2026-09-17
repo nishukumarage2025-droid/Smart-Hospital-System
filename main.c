@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 //Constants
 #define NUM_SPECIALTIES 4
 #define NUM_WARDS 4
@@ -7,6 +8,7 @@
 //Prototypes
 void registerPatient();
 void allocateBed();
+void displayPatients();
 
 
 //Arrays
@@ -24,6 +26,7 @@ int bedOccupancy [NUM_WARDS][20];
 char patientName [MAX_PATIENTS][50];
 int patientAge [MAX_PATIENTS];
 int urgencyLevel[MAX_PATIENTS];
+int patientID[MAX_PATIENTS];
 int specialtyID [MAX_PATIENTS];
 int admitted [MAX_PATIENTS];
 int wardID[MAX_PATIENTS];
@@ -43,6 +46,7 @@ void registerPatient()
 
     printf("Enter Patient Name: ");
     fgets(patientName[patientCount], sizeof(patientName[patientCount]),stdin);
+    patientName[patientCount][strcspn(patientName[patientCount], "\n")] ='\0';
 
     printf("Enter Patient Age: ");
     scanf("%d",&patientAge[patientCount]);
@@ -102,6 +106,8 @@ void registerPatient()
 
     while (getchar()!= '\n');
 
+    patientID[patientCount] = 1001 + patientCount;
+
     if (admitted[patientCount]==1)
     {
         allocateBed();
@@ -138,7 +144,34 @@ void allocateBed()
 
 }
 
+//display function
+void displayPatients()
+{
+    if (patientCount==0)
+    {
+        printf("No patients registered.\n");
+        return;
+    }
 
+    for(int i=0; i<patientCount;i++)
+    {
+        printf("Patient ID   : PAT-%d\n",patientID[i]);
+        printf("Patient Name : %s\n",patientName[i]);
+        printf("Age          : %d\n",patientAge[i]);
+        printf("Urgency Level: %d\n",urgencyLevel[i]);
+        printf("Specialty    : %s\n",specialtyName[specialtyID[i]-1]);
+        printf("Admitted     : %d\n",admitted[i]);
+
+        if (admitted[i] == 1)
+        {
+            printf("Ward         : %s\n",wardName[wardID[i]-1]);
+            printf("Bed          : %d\n",bedID[i]);
+            printf("Days Admitted: %d\n",daysAdmitted[i]);
+        }
+
+
+    }
+}
 
 
 int main()
@@ -146,6 +179,7 @@ int main()
 {
     printf("Smart Hospital & Resource Allocation System\n");
     registerPatient();
+    displayPatients();
 
     return 0;
 }
