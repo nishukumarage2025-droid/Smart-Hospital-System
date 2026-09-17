@@ -15,6 +15,7 @@ void displayPatients();
 char specialtyName [NUM_SPECIALTIES][50]= {"General Practice (OPD)","Paediatrics","Cardiology","Neurology"};
 int consultationFee[NUM_SPECIALTIES] = {1500,2500,4500,5000};
 int consultationTime [NUM_SPECIALTIES] = {15,20,30,30};
+int specialtyQueue[NUM_SPECIALTIES]={0};
 int dailyPatientCap [NUM_SPECIALTIES]={30,20,12,10};
 
 char wardName [NUM_WARDS][50]= {"General Ward","Paediatric Ward","Surgical Ward","ICU (Intensive Care Unit)"};
@@ -28,6 +29,7 @@ int patientAge [MAX_PATIENTS];
 int urgencyLevel[MAX_PATIENTS];
 int patientID[MAX_PATIENTS];
 int specialtyID [MAX_PATIENTS];
+int waitingTime[MAX_PATIENTS];
 int admitted [MAX_PATIENTS];
 int wardID[MAX_PATIENTS];
 int bedID[MAX_PATIENTS];
@@ -68,6 +70,9 @@ void registerPatient()
         printf("Invalid Input! Enter a number between 1-4 : ");
         scanf("%d",&specialtyID[patientCount]);
     }
+
+    waitingTime[patientCount]= specialtyQueue[specialtyID[patientCount]-1] * consultationTime[specialtyID[patientCount]-1];
+    specialtyQueue[specialtyID[patientCount]-1]++;
 
     printf("Is the patient admitted? (1-Yes,0-No): ");
     scanf("%d",&admitted[patientCount]);
@@ -159,6 +164,7 @@ void displayPatients()
         printf("Patient Name : %s\n",patientName[i]);
         printf("Age          : %d\n",patientAge[i]);
         printf("Urgency Level: %d\n",urgencyLevel[i]);
+        printf("Waiting Time : %d minutes\n",waitingTime[i]);
         printf("Specialty    : %s\n",specialtyName[specialtyID[i]-1]);
         printf("Admitted     : %d\n",admitted[i]);
 
