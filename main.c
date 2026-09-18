@@ -277,10 +277,16 @@ int main()
 {
     int choice = 0;
 
-    printf("Smart Hospital & Resource Allocation System\n");
 
     while(choice != 3)
     {
+        printf("\n=============================================\n");
+        printf("      WELCOME TO SMART HOSPITAL SYSTEM!        \n");
+        printf("=============================================\n");
+        printf("1. Register Patient\n");
+        printf("2. Display Patients\n");
+        printf("3. Exit\n");
+        printf("=============================================\n");
 
         printf("Enter Your Choice: ");
         scanf("%d", &choice);
