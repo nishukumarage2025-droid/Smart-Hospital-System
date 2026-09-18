@@ -9,7 +9,7 @@
 void registerPatient();
 void allocateBed();
 void displayPatients();
-
+void priorityPatients();
 
 //Arrays
 char specialtyName [NUM_SPECIALTIES][50]= {"General Practice (OPD)","Paediatrics","Cardiology","Neurology"};
@@ -41,6 +41,7 @@ int grossTotal[MAX_PATIENTS];
 int discount[MAX_PATIENTS];
 int finalBill[MAX_PATIENTS];
 int patientCount = 0;
+int priorityOrder[MAX_PATIENTS];
 
 //registration Function
 void registerPatient()
@@ -209,32 +210,65 @@ void displayPatients()
         return;
     }
 
+    priorityPatients();
+
     for(int i=0; i<patientCount;i++)
     {
-        printf("Patient ID   : PAT-%d\n",patientID[i]);
-        printf("Patient Name : %s\n",patientName[i]);
-        printf("Age          : %d\n",patientAge[i]);
-        printf("Urgency Level: %d\n",urgencyLevel[i]);
-        printf("Waiting Time : %d minutes\n",waitingTime[i]);
-        printf("Base Fee     : Rs. %d\n",baseFee[i]);
-        printf("Surcharge Fee: Rs. %d\n",surCharge[i]);
-        printf("Ward Cost Fee: Rs. %d\n",wardCost[i]);
-        printf("Gross Total  : Rs. %d\n",grossTotal[i]);
-        printf("Discount     : Rs. %d\n",discount[i]);
-        printf("Final Bill   : Rs. %d\n",finalBill[i]);
+        int index = priorityOrder[i];
 
-        printf("Specialty    : %s\n",specialtyName[specialtyID[i]-1]);
-        printf("Admitted     : %d\n",admitted[i]);
+        printf("Patient ID   : PAT-%d\n",patientID[index]);
+        printf("Patient Name : %s\n",patientName[index]);
+        printf("Age          : %d\n",patientAge[index]);
+        printf("Urgency Level: %d\n",urgencyLevel[index]);
+        printf("Waiting Time : %d minutes\n",waitingTime[index]);
+        printf("Base Fee     : Rs. %d\n",baseFee[index]);
+        printf("Surcharge Fee: Rs. %d\n",surCharge[index]);
+        printf("Ward Cost Fee: Rs. %d\n",wardCost[index]);
+        printf("Gross Total  : Rs. %d\n",grossTotal[index]);
+        printf("Discount     : Rs. %d\n",discount[index]);
+        printf("Final Bill   : Rs. %d\n",finalBill[index]);
+
+        printf("Specialty    : %s\n",specialtyName[specialtyID[index]-1]);
+        printf("Admitted     : %d\n",admitted[index]);
 
         if (admitted[i] == 1)
         {
-            printf("Ward         : %s\n",wardName[wardID[i]-1]);
-            printf("Bed          : %d\n",bedID[i]);
-            printf("Days Admitted: %d\n",daysAdmitted[i]);
+            printf("Ward         : %s\n",wardName[wardID[index]-1]);
+            printf("Bed          : %d\n",bedID[index]);
+            printf("Days Admitted: %d\n",daysAdmitted[index]);
         }
 
 
     }
+}
+
+//Priority function
+void priorityPatients()
+{
+    int i;
+
+    for(i=0; i< patientCount;i++)
+    {
+       priorityOrder[i] = i;
+    }
+
+    for(i=0; i< patientCount - 1;i++)
+    {
+        for(int j=0; j< patientCount - i - 1; j++)
+        {
+            if(urgencyLevel[priorityOrder[j]] < urgencyLevel[priorityOrder[j+1]])
+            {
+                int temp;
+
+                temp = priorityOrder[j];
+                priorityOrder[j] = priorityOrder[j+1];
+                priorityOrder[j+1] = temp;
+
+            }
+
+        }
+    }
+
 }
 
 //main
@@ -242,6 +276,8 @@ int main()
 
 {
     printf("Smart Hospital & Resource Allocation System\n");
+    registerPatient();
+    registerPatient();
     registerPatient();
     displayPatients();
 
