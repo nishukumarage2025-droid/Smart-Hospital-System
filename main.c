@@ -275,9 +275,35 @@ void priorityPatients()
 int main()
 
 {
+    int choice = 0;
+
     printf("Smart Hospital & Resource Allocation System\n");
-    registerPatient();
-    displayPatients();
+
+    while(choice != 3)
+    {
+
+        printf("Enter Your Choice: ");
+        scanf("%d", &choice);
+
+        switch(choice)
+        {
+
+           case 1:
+              while(getchar() != '\n');
+              registerPatient();
+              break;
+           case 2:
+              displayPatients();
+              break;
+           case 3:
+              printf("Exiting the system...\n");
+              break;
+
+        }
+
+
+
+    }
 
     return 0;
 }
