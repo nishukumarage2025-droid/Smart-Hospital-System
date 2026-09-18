@@ -1,16 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 //Constants
 #define NUM_SPECIALTIES 4
 #define NUM_WARDS 4
 #define MAX_PATIENTS 100
+
 //Prototypes
 void registerPatient();
 void allocateBed();
 void displayPatients();
 void priorityPatients();
 void generateReports();
+void formatMoney(int amount);
+
 
 //Arrays
 char specialtyName [NUM_SPECIALTIES][50]= {"General Practice (OPD)","Paediatrics","Cardiology","Neurology"};
@@ -217,28 +221,123 @@ void displayPatients()
     {
         int index = priorityOrder[i];
 
-        printf("Patient ID   : PAT-%d\n",patientID[index]);
-        printf("Patient Name : %s\n",patientName[index]);
-        printf("Age          : %d\n",patientAge[index]);
-        printf("Urgency Level: %d\n",urgencyLevel[index]);
-        printf("Waiting Time : %d minutes\n",waitingTime[index]);
-        printf("Base Fee     : Rs. %d\n",baseFee[index]);
-        printf("Surcharge Fee: Rs. %d\n",surCharge[index]);
-        printf("Ward Cost Fee: Rs. %d\n",wardCost[index]);
-        printf("Gross Total  : Rs. %d\n",grossTotal[index]);
-        printf("Discount     : Rs. %d\n",discount[index]);
-        printf("Final Bill   : Rs. %d\n",finalBill[index]);
+        printf("\n================================================\n");
+        printf("          SMART HOSPITAL ADMISSION & BILL\n");
+        printf("------------------------------------------------\n\n");
 
-        printf("Specialty    : %s\n",specialtyName[specialtyID[index]-1]);
-        printf("Admitted     : %d\n",admitted[index]);
+        printf("Patient ID                : PAT-%d\n",patientID[index]);
+        printf("Patient Name              : %s\n",patientName[index]);
+        if(patientAge[index] < 5 || patientAge[index]> 65)
+        {
+            printf("Age                       : %d Years (15%% Subsidy Eligible)\n", patientAge[index]);
+        }
+        else
+        {
+            printf("Age                       : %d Years\n", patientAge[index]);
+        }
+        printf("Specialty                 : %s\n",specialtyName[specialtyID[index]-1]);
+        printf("Urgency Level             : Level %d ",urgencyLevel[index]);
 
+        if(urgencyLevel[index]== 1)
+            printf("(Normal)\n");
+        else if(urgencyLevel[index]== 2)
+            printf("(Urgent)\n");
+        else
+            printf("(Critical)\n");
+
+         //
+
+        if(admitted[index] == 1)
+        {
+            printf("Admission                 : Yes\n");
+        }
+        else
+        {
+            printf("Admission                 : No\n");
+        }
+        //
         if (admitted[index] == 1)
         {
-            printf("Ward         : %s\n",wardName[wardID[index]-1]);
-            printf("Bed          : %d\n",bedID[index]);
-            printf("Days Admitted: %d\n",daysAdmitted[index]);
+            printf("Assigned Ward             : %s (Bed #%02d)\n",wardName[wardID[index]-1],bedID[index]);
+
+            printf("Days Admitted             : %d Days\n",daysAdmitted[index]);
         }
 
+        printf("\n------------------------------------------------\n");
+
+
+        printf("Base Consultation Fee     : ");
+        formatMoney(baseFee[index]);
+        printf("\n");
+        //
+        printf("Emergency Surcharge Fee   : ");
+        formatMoney(surCharge[index]);
+
+        if(urgencyLevel[index]==2)
+        {
+            printf(" (20%%)");
+
+        }
+        else if(urgencyLevel[index]==3)
+        {
+            printf(" (50%%)");
+        }
+        printf("\n");
+
+        //
+        if (admitted[index]== 1)
+        {
+            printf("Ward Stay Cost (%d Days)   : ",daysAdmitted[index]);
+            formatMoney(wardCost[index]);
+            printf("\n");
+        }
+        else
+        {
+            printf("Ward Stay Cost            : ");
+            formatMoney(wardCost[index]);
+            printf("\n");
+        }
+        printf("\n------------------------------------------------\n");
+        //
+        printf("Gross Total Bill          : ");
+        formatMoney(grossTotal[index]);
+        printf("\n");
+
+        //
+        if (discount[index]> 0)
+        {
+            printf("Age Subsidy Discount      : LKR -");
+
+            if(discount[index] >= 1000)
+            {
+                printf("%d,%03d.00", discount[index]/ 1000, discount[index]% 1000);
+            }
+            else
+            {
+                printf("%d.00",discount[index]);
+            }
+            printf(" (15%%)\n");
+        }
+        else
+        {
+            printf("Age Subsidy Discount      : LKR 0.00\n");
+        }
+        printf("\n------------------------------------------------\n");
+        //
+        printf("Final Payable Amount      : ");
+        formatMoney(finalBill[index]);
+        printf("\n");
+        //
+        if (waitingTime[index] == 0)
+        {
+            printf("Estimated Waiting Time    : 0.00 mins (Immediate Attention)\n");
+        }
+        else
+        {
+            printf("Estimated Waiting Time    : %.2f mins\n",(float)waitingTime[index]);
+
+        }
+        printf("\n================================================\n");
 
     }
 }
@@ -316,7 +415,7 @@ void generateReports()
         }
     }
 
-    printf("\n   Highest-Paying Patient\n   ");
+    printf("\n   Highest-Paying Patient\n");
     printf("--------------------------------\n");
     printf("Patient Name      : %s\n", patientName[highestPatient]);
     printf("Total Bill        : Rs. %d\n", finalBill[highestPatient]);
@@ -354,7 +453,20 @@ void generateReports()
 
 }
 
+//Money Formating Function
+void formatMoney(int amount)
+{
+    printf("LKR ");
 
+    if (amount >= 1000)
+    {
+        printf("%d,%03d.00",amount / 1000, amount % 1000);
+    }
+    else
+    {
+        printf("%d.00",amount);
+    }
+}
 
 
 //main
