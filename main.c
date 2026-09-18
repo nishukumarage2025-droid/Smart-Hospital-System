@@ -277,8 +277,6 @@ int main()
 {
     printf("Smart Hospital & Resource Allocation System\n");
     registerPatient();
-    registerPatient();
-    registerPatient();
     displayPatients();
 
     return 0;
