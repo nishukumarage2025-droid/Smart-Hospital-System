@@ -13,7 +13,7 @@ void allocateBed();
 void displayPatients();
 void priorityPatients();
 void generateReports();
-void formatMoney(int amount);
+void formatMoney(float amount);
 
 
 //Arrays
@@ -43,8 +43,8 @@ int wardCost[MAX_PATIENTS];
 int baseFee[MAX_PATIENTS];
 int surCharge[MAX_PATIENTS];
 int grossTotal[MAX_PATIENTS];
-int discount[MAX_PATIENTS];
-int finalBill[MAX_PATIENTS];
+float discount[MAX_PATIENTS];
+float finalBill[MAX_PATIENTS];
 int patientCount = 0;
 int priorityOrder[MAX_PATIENTS];
 
@@ -156,7 +156,7 @@ void registerPatient()
     //Age subsidy
     if (patientAge[patientCount]< 5 || patientAge[patientCount]> 65)
     {
-        discount[patientCount]= grossTotal[patientCount]*15/100;
+        discount[patientCount]= grossTotal[patientCount]*15.0/100.0;
     }
     else
     {
@@ -307,15 +307,7 @@ void displayPatients()
         if (discount[index]> 0)
         {
             printf("Age Subsidy Discount      : LKR -");
-
-            if(discount[index] >= 1000)
-            {
-                printf("%d,%03d.00", discount[index]/ 1000, discount[index]% 1000);
-            }
-            else
-            {
-                printf("%d.00",discount[index]);
-            }
+            printf("%.2f",discount[index]);
             printf(" (15%%)\n");
         }
         else
@@ -376,8 +368,8 @@ void generateReports()
     int normal = 0;
     int urgent = 0;
     int critical = 0;
-    int totalRevenue = 0;
-    int totalDiscount = 0;
+    float totalRevenue = 0;
+    float totalDiscount = 0;
     int occupiedBeds;
     int highestPatient = 0;
 
@@ -418,7 +410,9 @@ void generateReports()
     printf("\n   Highest-Paying Patient\n");
     printf("--------------------------------\n");
     printf("Patient Name      : %s\n", patientName[highestPatient]);
-    printf("Total Bill        : Rs. %d\n", finalBill[highestPatient]);
+    printf("Total Bill        : ");
+    formatMoney(finalBill[highestPatient]);
+    printf("\n");
 
     printf("\n   Bed Occupancy Report   \n");
     printf("--------------------------------\n");
@@ -447,24 +441,32 @@ void generateReports()
 
     printf("\n      Financial Summary       \n");
     printf("---------------------------------\n");
-    printf("Total Revenue     : %d\n", totalRevenue);
-    printf("Total Discount    : %d\n", totalDiscount);
+    printf("Total Revenue     : ");
+    formatMoney(totalRevenue);
+    printf("\n");
+
+    printf("Total Discount    : ");
+    formatMoney(totalDiscount);
+    printf("\n");
 
 
 }
 
 //Money Formating Function
-void formatMoney(int amount)
+void formatMoney(float amount)
 {
+    int whole =(int)amount;
+    int cents =(int)((amount - whole)*100 + 0.5f);
+
     printf("LKR ");
 
-    if (amount >= 1000)
+    if (whole >= 1000)
     {
-        printf("%d,%03d.00",amount / 1000, amount % 1000);
+        printf("%d,%03d.%02d", whole / 1000, whole % 1000, cents);
     }
     else
     {
-        printf("%d.00",amount);
+        printf("%d.%02d", whole, cents);
     }
 }
 
