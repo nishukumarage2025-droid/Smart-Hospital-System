@@ -10,6 +10,7 @@ void registerPatient();
 void allocateBed();
 void displayPatients();
 void priorityPatients();
+void generateReports();
 
 //Arrays
 char specialtyName [NUM_SPECIALTIES][50]= {"General Practice (OPD)","Paediatrics","Cardiology","Neurology"};
@@ -231,7 +232,7 @@ void displayPatients()
         printf("Specialty    : %s\n",specialtyName[specialtyID[index]-1]);
         printf("Admitted     : %d\n",admitted[index]);
 
-        if (admitted[i] == 1)
+        if (admitted[index] == 1)
         {
             printf("Ward         : %s\n",wardName[wardID[index]-1]);
             printf("Bed          : %d\n",bedID[index]);
@@ -270,6 +271,91 @@ void priorityPatients()
     }
 
 }
+//Report Generation Function
+void generateReports()
+{
+    int normal = 0;
+    int urgent = 0;
+    int critical = 0;
+    int totalRevenue = 0;
+    int totalDiscount = 0;
+    int occupiedBeds;
+    int highestPatient = 0;
+
+    if(patientCount == 0)
+    {
+        printf("No Patients Registered Yet!\n");
+        return;
+    }
+
+    for (int i = 0; i< patientCount;i++)
+    {
+       switch(urgencyLevel[i])
+       {
+            case 1:
+                normal++;
+                break;
+            case 2:
+                urgent++;
+                break;
+            case 3:
+                critical++;
+                break;
+
+       }
+
+       totalRevenue += finalBill[i];
+       totalDiscount += discount[i];
+    }
+
+    for(int i = 1 ; i< patientCount;i++)
+    {
+        if(finalBill[i] > finalBill[highestPatient])
+        {
+            highestPatient = i;
+        }
+    }
+
+    printf("\n   Highest-Paying Patient\n   ");
+    printf("--------------------------------\n");
+    printf("Patient Name      : %s\n", patientName[highestPatient]);
+    printf("Total Bill        : Rs. %d\n", finalBill[highestPatient]);
+
+    printf("\n   Bed Occupancy Report   \n");
+    printf("--------------------------------\n");
+
+    for(int i = 0;i < NUM_WARDS;i++)
+    {
+        occupiedBeds = 0;
+
+        for(int j = 0; j < totalBedCap[i];j++)
+        {
+            if(bedOccupancy[i][j] == 1)
+            {
+                occupiedBeds++;
+            }
+        }
+
+        float occupancyPercentage = (float) occupiedBeds / totalBedCap[i] * 100;
+        printf("%s : %.1f%% occupied\n", wardName[i], occupancyPercentage);
+    }
+
+    printf("\n  Patient Count by Urgency\n");
+    printf("---------------------------------\n");
+    printf("Normal Patients   : %d\n", normal);
+    printf("Urgent Patients   : %d\n", urgent);
+    printf("Critical Patients : %d\n", critical);
+
+    printf("\n      Financial Summary       \n");
+    printf("---------------------------------\n");
+    printf("Total Revenue     : %d\n", totalRevenue);
+    printf("Total Discount    : %d\n", totalDiscount);
+
+
+}
+
+
+
 
 //main
 int main()
@@ -278,14 +364,15 @@ int main()
     int choice = 0;
 
 
-    while(choice != 3)
+    while(choice != 4)
     {
         printf("\n=============================================\n");
         printf("      WELCOME TO SMART HOSPITAL SYSTEM!        \n");
         printf("=============================================\n");
         printf("1. Register Patient\n");
         printf("2. Display Patients\n");
-        printf("3. Exit\n");
+        printf("3. Generate Reports\n");
+        printf("4. Exit\n");
         printf("=============================================\n");
 
         printf("Enter Your Choice: ");
@@ -302,6 +389,9 @@ int main()
               displayPatients();
               break;
            case 3:
+              generateReports();
+              break;
+           case 4:
               printf("Exiting the system...\n");
               break;
 
