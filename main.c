@@ -14,6 +14,9 @@ void displayPatients();
 void priorityPatients();
 void generateReports();
 void formatMoney(float amount);
+void saveBedStatus();
+void loadBedStatus();
+void savePatientRecord();
 
 
 //Arrays
@@ -174,6 +177,7 @@ void registerPatient()
     {
         allocateBed();
     }
+    savePatientRecord();
 
     patientCount++;
 
@@ -470,12 +474,64 @@ void formatMoney(float amount)
     }
 }
 
+//Saving Beds Function
+void saveBedStatus()
+{
+    FILE *file;
+
+    file = fopen("beds_status.txt", "w");
+
+    for(int i = 0; i< NUM_WARDS; i++)
+    {
+        for(int j = 0; j< totalBedCap[i];j++)
+        {
+            fprintf(file, "%d ", bedOccupancy[i][j]);
+        }
+        fprintf(file, "\n");
+    }
+
+    fclose(file);
+}
+
+//Load bed status Function
+void loadBedStatus()
+{
+    FILE *file;
+
+    file = fopen("beds_status.txt", "r");
+
+    for(int i =0; i< NUM_WARDS;i++)
+    {
+        for(int j = 0; j <totalBedCap[i];j++)
+        {
+            fscanf(file, "%d", &bedOccupancy[i][j]);
+        }
+    }
+    fclose(file);
+}
+
+//Saving Patient Record Function
+void savePatientRecord()
+{
+    FILE *file;
+
+    file = fopen("patient_records.txt", "a");
+
+    fprintf(file, "Patient ID  : PAT-%d\n", patientID[patientCount]);
+    fprintf(file, "Patient Name: %s\n", patientName[patientCount]);
+    fprintf(file, "\n");
+
+    fclose(file);
+}
+
 
 //main
 int main()
 
 {
     int choice = 0;
+
+    loadBedStatus();
 
 
     while(choice != 4)
@@ -514,6 +570,7 @@ int main()
 
 
     }
+    saveBedStatus();
 
     return 0;
 }
