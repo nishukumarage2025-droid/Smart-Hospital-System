@@ -5,6 +5,7 @@
 #include "billing.h"
 #include "hospital.h"
 #include "reports.h"
+#include <ctype.h>
 
 //Constants
 #define NUM_SPECIALTIES 4
@@ -15,6 +16,8 @@
 
 void savePatientRecord();
 void loadPatientID();
+void clearScreen();
+int screenOption();
 
 
 //Arrays
@@ -114,6 +117,43 @@ void loadPatientID()
     fclose(file);
 }
 
+//Clear Screen Function
+void clearScreen()
+{
+    system("cls");
+}
+
+//Screen Option Function
+int screenOption()
+{
+    int option;
+
+    while(1)
+    {
+
+
+        printf("\n------------------------------------------------\n");
+        printf("1. Return to Main Menu\n");
+        printf("2. Exit System\n");
+        printf("-------------------------------------------------\n");
+        printf("Enter your choice: ");
+
+        if (scanf("%d", &option) != 1)
+        {
+            printf("Invalid Input! Please Enter 1 or 2\n");
+
+            while(getchar() != '\n');
+            continue;
+        }
+
+        if(option == 1 || option == 2)
+        {
+           return option;
+        }
+
+        printf("Invalid Choice! Please Enter 1 or 2\n");
+    }
+}
 
 //main
 int main()
@@ -126,6 +166,8 @@ int main()
 
     while(choice != 5)
     {
+        clearScreen();
+
         printf("\n=============================================\n");
         printf("      WELCOME TO SMART HOSPITAL SYSTEM!        \n");
         printf("=============================================\n");
@@ -141,6 +183,10 @@ int main()
         {
             printf("Invalid Input! Please enter a number.\n");
             while(getchar() != '\n');
+
+            printf("Press Enter to continue...");
+            getchar();
+
             continue;
         }
 
@@ -148,20 +194,47 @@ int main()
         {
 
            case 1:
+              clearScreen();
               while(getchar() != '\n');
               registerPatient();
+
+              if(screenOption()== 2)
+                choice = 5;
+
               break;
            case 2:
+              clearScreen();
               displayPatients();
+
+              if(screenOption()== 2)
+                choice = 5;
+
               break;
            case 3:
+              clearScreen();
               displayBedAvailability();
+
+              if(screenOption()== 2)
+                choice = 5;
+
               break;
            case 4:
+              clearScreen();
               generateReports();
+
+              if(screenOption()== 2)
+                choice = 5;
+
               break;
            case 5:
               printf("Exiting the system...\n");
+              break;
+
+           default:
+              printf("Invalid Choice! Please Enter a Number FROM 1 to 5\n");
+              printf("Press Enter to continue...");
+              getchar();
+              getchar();
               break;
 
         }

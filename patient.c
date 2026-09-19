@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "patient.h"
 #include "billing.h"
+
 
 extern int patientCount;
 extern int priorityOrder[MAX_PATIENTS];
@@ -37,14 +39,66 @@ void registerPatient()
 
     }
 
+    printf("\n==================================================\n");
+    printf("               PATIENT REGISTRATION\n");
+    printf("==================================================\n\n");
+
+    printf("Patient Information\n");
+    printf("--------------------------------------------------\n");
+
     printf("Enter Patient Name: ");
     fgets(patientName[patientCount], sizeof(patientName[patientCount]),stdin);
     patientName[patientCount][strcspn(patientName[patientCount], "\n")] ='\0';
 
-    printf("Enter Patient Age: ");
-    scanf("%d",&patientAge[patientCount]);
+    int validName = 1;
 
-    printf("Enter Urgency Level (1-Normal,2-Urgent,3-Critical): ");
+    for(int i = 0; patientName[patientCount][i] != '\0'; i++)
+    {
+        if(!isalpha(patientName[patientCount][i]) && patientName[patientCount][i] != ' ')
+        {
+            validName = 0;
+            break;
+        }
+    }
+
+    while(!validName)
+    {
+        printf("Invalid Name! Please Use Letters & Spaces Only: ");
+
+        fgets(patientName[patientCount], sizeof(patientName[patientCount]),stdin);
+        patientName[patientCount][strcspn(patientName[patientCount], "\n")] ='\0';
+
+        validName = 1;
+
+        for(int i = 0; patientName[patientCount][i] != '\0';i++)
+        {
+            if(!isalpha(patientName[patientCount][i]) && patientName[patientCount][i] != ' ')
+            {
+                validName = 0;
+                break;
+            }
+        }
+
+    }
+
+    //
+    printf("Enter Patient Age : ");
+
+    while(scanf("%d", &patientAge[patientCount])!= 1 || patientAge[patientCount] < 0)
+    {
+        printf("Invalid Age! Please Enter a Valid Age: ");
+
+        while(getchar() != '\n');
+    }
+
+    //
+    printf("\nUrgency Level\n");
+    printf("--------------------------------------------------\n");
+    printf("1. Normal\n");
+    printf("2. Urgent\n");
+    printf("3. Critical\n\n");
+
+    printf("Enter Urgency Level: ");
     scanf("%d",&urgencyLevel[patientCount]);
 
     while(urgencyLevel[patientCount]<1 || urgencyLevel[patientCount]>3)
@@ -52,8 +106,15 @@ void registerPatient()
         printf("Invalid Input! Enter a number between 1-3 : ");
         scanf("%d",&urgencyLevel[patientCount]);
     }
+    //
+    printf("\nSpecialty\n");
+    printf("--------------------------------------------------\n");
+    printf("1. General Practice (OPD)\n");
+    printf("2. Paediatrics\n");
+    printf("3. Cardiology\n");
+    printf("4. Neurology\n\n");
 
-    printf("Enter Specialty ID (1-4): ");
+    printf("Enter Specialty ID: ");
     scanf("%d",&specialtyID[patientCount]);
 
     while(specialtyID[patientCount]<1 || specialtyID[patientCount]>4)
@@ -69,7 +130,12 @@ void registerPatient()
 
 
     //
-    printf("Is the patient admitted? (1-Yes,0-No): ");
+    printf("\nAdmission\n");
+    printf("--------------------------------------------------\n");
+    printf("1 - Yes\n");
+    printf("2 - No\n\n");
+
+    printf("Is the patient admitted?: ");
     scanf("%d",&admitted[patientCount]);
 
     while(admitted[patientCount]!= 0 && admitted[patientCount]!= 1)
@@ -80,6 +146,13 @@ void registerPatient()
 
     if(admitted[patientCount]== 1)
     {
+        printf("\nWard Selection\n");
+        printf("--------------------------------------------------\n");
+        printf("1 - General Ward\n");
+        printf("2 - Paediatric Ward\n");
+        printf("3 - Surgical Ward\n");
+        printf("4 - ICU (Intensive Care Unit)\n\n");
+
         printf("Enter Ward ID (1-4): ");
         scanf("%d",&wardID[patientCount]);
 
