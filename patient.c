@@ -20,6 +20,9 @@ extern int surCharge[MAX_PATIENTS];
 extern int grossTotal[MAX_PATIENTS];
 extern float discount[MAX_PATIENTS];
 extern float finalBill[MAX_PATIENTS];
+extern int bedID[MAX_PATIENTS];
+extern char specialtyName[NUM_SPECIALTIES][50];
+extern char wardName[NUM_WARDS][50];
 
 //Registration Function
 void registerPatient()
@@ -174,4 +177,133 @@ void priorityPatients()
         }
     }
 
+}
+
+//Display Function
+
+void displayPatients()
+{
+    if (patientCount==0)
+    {
+        printf("No patients registered.\n");
+        return;
+    }
+
+    priorityPatients();
+
+    for(int i=0; i<patientCount;i++)
+    {
+        int index = priorityOrder[i];
+
+        printf("\n================================================\n");
+        printf("          SMART HOSPITAL ADMISSION & BILL\n");
+        printf("------------------------------------------------\n\n");
+
+        printf("Patient ID                : PAT-%d\n",patientID[index]);
+        printf("Patient Name              : %s\n",patientName[index]);
+        if(patientAge[index] < 5 || patientAge[index]> 65)
+        {
+            printf("Age                       : %d Years (15%% Subsidy Eligible)\n", patientAge[index]);
+        }
+        else
+        {
+            printf("Age                       : %d Years\n", patientAge[index]);
+        }
+        printf("Specialty                 : %s\n",specialtyName[specialtyID[index]-1]);
+        printf("Urgency Level             : Level %d ",urgencyLevel[index]);
+
+        if(urgencyLevel[index]== 1)
+            printf("(Normal)\n");
+        else if(urgencyLevel[index]== 2)
+            printf("(Urgent)\n");
+        else
+            printf("(Critical)\n");
+
+         //
+
+        if(admitted[index] == 1)
+        {
+            printf("Admission                 : Yes\n");
+        }
+        else
+        {
+            printf("Admission                 : No\n");
+        }
+        //
+        if (admitted[index] == 1)
+        {
+            printf("Assigned Ward             : %s (Bed #%02d)\n",wardName[wardID[index]-1],bedID[index]);
+
+            printf("Days Admitted             : %d Days\n",daysAdmitted[index]);
+        }
+
+        printf("\n------------------------------------------------\n");
+
+
+        printf("Base Consultation Fee     : ");
+        formatMoney(baseFee[index]);
+        printf("\n");
+        //
+        printf("Emergency Surcharge Fee   : ");
+        formatMoney(surCharge[index]);
+
+        if(urgencyLevel[index]==2)
+        {
+            printf(" (20%%)");
+
+        }
+        else if(urgencyLevel[index]==3)
+        {
+            printf(" (50%%)");
+        }
+        printf("\n");
+
+        //
+        if (admitted[index]== 1)
+        {
+            printf("Ward Stay Cost (%d Days)   : ",daysAdmitted[index]);
+            formatMoney(wardCost[index]);
+            printf("\n");
+        }
+        else
+        {
+            printf("Ward Stay Cost            : ");
+            formatMoney(wardCost[index]);
+            printf("\n");
+        }
+        printf("\n------------------------------------------------\n");
+        //
+        printf("Gross Total Bill          : ");
+        formatMoney(grossTotal[index]);
+        printf("\n");
+
+        //
+        if (discount[index]> 0)
+        {
+            printf("Age Subsidy Discount      : LKR -");
+            printf("%.2f",discount[index]);
+            printf(" (15%%)\n");
+        }
+        else
+        {
+            printf("Age Subsidy Discount      : LKR 0.00\n");
+        }
+        printf("\n------------------------------------------------\n");
+        //
+        printf("Final Payable Amount      : ");
+        formatMoney(finalBill[index]);
+        printf("\n");
+        //
+        if (waitingTime[index] == 0)
+        {
+            printf("Estimated Waiting Time    : 0.00 mins (Immediate Attention)\n");
+        }
+        else
+        {
+            printf("Estimated Waiting Time    : %.2f mins\n",(float)waitingTime[index]);
+
+        }
+        printf("\n================================================\n");
+
+    }
 }
