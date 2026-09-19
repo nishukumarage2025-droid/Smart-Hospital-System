@@ -12,6 +12,6 @@ void calculateWaitingTime(int index);
 int allocateBed();
 void calculateBilling(int index);
 void savePatientRecord();
-void formatMoney(float amount);
+
 
 #endif // PATIENT_H

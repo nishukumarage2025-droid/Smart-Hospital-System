@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "patient.h"
+#include "billing.h"
 
 extern int patientCount;
 extern int priorityOrder[MAX_PATIENTS];

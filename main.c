@@ -70,52 +70,6 @@ void calculateWaitingTime(int index)
 }
 
 //Bill Calculation Function
-void calculateBilling(int index)
-{
-    //Base fee
-    baseFee[index] = consultationFee[specialtyID[index] - 1];
-
-    //Emergency Surcharge
-    if (urgencyLevel[index] == 1)
-    {
-        surCharge[index] = 0;
-    }
-    else if(urgencyLevel[index] == 2)
-    {
-        surCharge[index] = baseFee[index] * 20 / 100;
-    }
-    else
-    {
-        surCharge[index] = baseFee[index] * 50 / 100;
-    }
-
-    //Ward Cost
-    if(admitted[index] == 1)
-    {
-        wardCost[index] = daysAdmitted[index] * dailyBedRate[wardID[index] - 1];
-    }
-    else
-    {
-        wardCost[index] = 0;
-    }
-
-    //Gross Total
-    grossTotal[index] = baseFee[index] + surCharge[index] + wardCost[index];
-
-    //Age Subsidy Discount
-    if (patientAge[index] < 5 || patientAge[index] > 65)
-    {
-        discount[index] = grossTotal[index] * 15.0 / 100.0;
-    }
-    else
-    {
-        discount[index] = 0;
-    }
-
-    //Final Bill
-    finalBill[index] = grossTotal[index] - discount[index];
-}
-
 
 //Bed allocate function
 int allocateBed()
@@ -313,22 +267,7 @@ void generateReports()
 }
 
 //Money Formating Function
-void formatMoney(float amount)
-{
-    int whole =(int)amount;
-    int cents =(int)((amount - whole)*100 + 0.5f);
 
-    printf("LKR ");
-
-    if (whole >= 1000)
-    {
-        printf("%d,%03d.%02d", whole / 1000, whole % 1000, cents);
-    }
-    else
-    {
-        printf("%d.%02d", whole, cents);
-    }
-}
 
 //Saving Beds Function
 void saveBedStatus()
