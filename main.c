@@ -17,6 +17,7 @@ void formatMoney(float amount);
 void saveBedStatus();
 void loadBedStatus();
 void savePatientRecord();
+void loadPatientID();
 
 
 //Arrays
@@ -48,8 +49,9 @@ int surCharge[MAX_PATIENTS];
 int grossTotal[MAX_PATIENTS];
 float discount[MAX_PATIENTS];
 float finalBill[MAX_PATIENTS];
-int patientCount = 0;
 int priorityOrder[MAX_PATIENTS];
+int patientCount = 0;
+int nextPatientID = 1001;
 
 //registration Function
 void registerPatient()
@@ -171,7 +173,8 @@ void registerPatient()
 
     while (getchar()!= '\n');
 
-    patientID[patientCount] = 1001 + patientCount;
+    patientID[patientCount] = nextPatientID;
+    nextPatientID++;
 
     if (admitted[patientCount]==1)
     {
@@ -481,6 +484,12 @@ void saveBedStatus()
 
     file = fopen("beds_status.txt", "w");
 
+    if(file == NULL)
+    {
+        printf("Error Opening Bed Status File!\n");
+        return;
+    }
+
     for(int i = 0; i< NUM_WARDS; i++)
     {
         for(int j = 0; j< totalBedCap[i];j++)
@@ -500,6 +509,11 @@ void loadBedStatus()
 
     file = fopen("beds_status.txt", "r");
 
+    if (file == NULL)
+    {
+        return;
+    }
+
     for(int i =0; i< NUM_WARDS;i++)
     {
         for(int j = 0; j <totalBedCap[i];j++)
@@ -517,9 +531,55 @@ void savePatientRecord()
 
     file = fopen("patient_records.txt", "a");
 
-    fprintf(file, "Patient ID  : PAT-%d\n", patientID[patientCount]);
-    fprintf(file, "Patient Name: %s\n", patientName[patientCount]);
+    if(file == NULL)
+    {
+        printf("Error Opening Patient Records File!\n");
+        return;
+    }
+
+    fprintf(file, "Patient ID    : PAT-%d\n", patientID[patientCount]);
+    fprintf(file, "Patient Name  : %s\n", patientName[patientCount]);
+    fprintf(file, "Specialty     : %s\n", specialtyName[specialtyID[patientCount]- 1]);
+    fprintf(file, "Urgency Level : %d\n", urgencyLevel[patientCount]);
+    fprintf(file, "Gross Total   : %d.00\n", grossTotal[patientCount]);
+    fprintf(file, "Discount      : %.2f\n", discount[patientCount]);
+    fprintf(file, "Final Bill    : %.2f\n", finalBill[patientCount]);
+    fprintf(file, "Ward Cost     : %d.00\n", wardCost[patientCount]);
+    fprintf(file, "Surcharge     : %d.00\n", surCharge[patientCount]);
+    fprintf(file, "Waiting Time  : %d mins\n", waitingTime[patientCount]);
     fprintf(file, "\n");
+
+    fclose(file);
+}
+
+//Load patient ID Function
+void loadPatientID()
+{
+    FILE *file;
+    char line[100];
+    int id;
+
+    file = fopen("patient_records.txt", "r");
+
+    if(file == NULL)
+    {
+        return;
+    }
+
+    while (fgets(line, sizeof(line),file) != NULL)
+    {
+        if(strstr(line, "Patient ID") != NULL)
+        {
+            if(sscanf(line, "%*[^-]-%d", &id)== 1)
+            {
+                if(id >= nextPatientID)
+                {
+                    nextPatientID = id + 1;
+                }
+            }
+        }
+
+    }
 
     fclose(file);
 }
@@ -532,7 +592,7 @@ int main()
     int choice = 0;
 
     loadBedStatus();
-
+    loadPatientID();
 
     while(choice != 4)
     {
