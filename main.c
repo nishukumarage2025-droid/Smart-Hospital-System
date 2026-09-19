@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "patient.h"
 
 //Constants
 #define NUM_SPECIALTIES 4
@@ -462,33 +463,7 @@ void displayPatients()
 }
 
 //Priority function
-void priorityPatients()
-{
-    int i;
 
-    for(i=0; i< patientCount;i++)
-    {
-       priorityOrder[i] = i;
-    }
-
-    for(i=0; i< patientCount - 1;i++)
-    {
-        for(int j=0; j< patientCount - i - 1; j++)
-        {
-            if(urgencyLevel[priorityOrder[j]] < urgencyLevel[priorityOrder[j+1]])
-            {
-                int temp;
-
-                temp = priorityOrder[j];
-                priorityOrder[j] = priorityOrder[j+1];
-                priorityOrder[j+1] = temp;
-
-            }
-
-        }
-    }
-
-}
 //Report Generation Function
 void generateReports()
 {
