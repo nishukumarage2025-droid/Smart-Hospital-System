@@ -6,5 +6,9 @@
 void registerPatient();
 void displayPatients();
 void priorityPatients();
+void calculateWaitingTime(int index);
+int allocateBed();
+void calculateBilling(int index);
+void savePatientRecord();
 
 #endif // PATIENT_H
