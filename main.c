@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "patient.h"
+#include "billing.h"
+#include "hospital.h"
 
 //Constants
 #define NUM_SPECIALTIES 4
@@ -9,19 +11,10 @@
 #define MAX_PATIENTS 100
 
 //Prototypes
-void registerPatient();
-int allocateBed();
-void displayPatients();
-void priorityPatients();
+
 void generateReports();
-void formatMoney(float amount);
-void saveBedStatus();
-void loadBedStatus();
 void savePatientRecord();
 void loadPatientID();
-void calculateWaitingTime(int index);
-void calculateBilling(int index);
-void displayBedAvailability();
 
 
 //Arrays
@@ -57,120 +50,7 @@ int priorityOrder[MAX_PATIENTS];
 int patientCount = 0;
 int nextPatientID = 1001;
 
-//registration Function
 
-
-//Waiting time Calculation Function
-void calculateWaitingTime(int index)
-{
-    waitingTime[index] =
-         specialtyQueue[specialtyID[index]- 1] * consultationTime[specialtyID[index]- 1];
-
-    specialtyQueue[specialtyID[index] - 1]++;
-}
-
-//Bill Calculation Function
-
-//Bed allocate function
-int allocateBed()
-{
-    int wardIndex = wardID[patientCount] - 1;
-    int bedIndex;
-    int bedFound = 0;
-
-    for (bedIndex =0;bedIndex < totalBedCap[wardIndex];bedIndex++)
-    {
-        if(bedOccupancy[wardIndex][bedIndex]==0)
-        {
-            bedOccupancy[wardIndex][bedIndex] = 1;
-            bedID[patientCount]= bedIndex + 1;
-            bedFound = 1;
-            break;
-
-        }
-
-    }
-    if (bedFound== 0)
-    {
-        printf("No Beds Available in the Selected Ward!\n");
-        return 0;
-    }
-
-    return 1;
-
-}
-
-//Display Bed Availability function
-void displayBedAvailability()
-{
-    printf("\n==================================================\n");
-    printf("                BED AVAILABILITY\n");
-    printf("\n==================================================\n");
-    printf("O = Available    X = Occupied\n");
-
-    for(int i = 0; i< NUM_WARDS; i++)
-    {
-        printf("\n%s\n", wardName[i]);
-        printf("\n--------------------------------------------------\n");
-
-        int rows;
-
-        if (totalBedCap[i]> 10)
-        {
-            rows = 2;
-        }
-        else
-        {
-            rows = 1;
-        }
-
-        for(int row = 0; row < rows; row++)
-        {
-            int start = row * 10;
-            int end = start + 10;
-
-            if(end > totalBedCap[i])
-            {
-                end = totalBedCap[i];
-            }
-
-            printf("      ");
-
-            for(int j = start; j < end;j++)
-            {
-                printf("%02d ", j+1);
-            }
-
-            printf("\n");
-
-            printf("      ");
-
-            for(int j = start; j < end; j++)
-            {
-                if(bedOccupancy[i][j] == 0)
-                {
-                    printf(" O ");
-                }
-                else
-                {
-                    printf(" X ");
-                }
-            }
-            printf("\n\n");
-        }
-
-
-
-
-    }
-    printf("\n==================================================\n");
-}
-
-
-//display function
-
-
-//Priority function
 
 //Report Generation Function
 void generateReports()
@@ -266,55 +146,7 @@ void generateReports()
 
 }
 
-//Money Formating Function
 
-
-//Saving Beds Function
-void saveBedStatus()
-{
-    FILE *file;
-
-    file = fopen("beds_status.txt", "w");
-
-    if(file == NULL)
-    {
-        printf("Error Opening Bed Status File!\n");
-        return;
-    }
-
-    for(int i = 0; i< NUM_WARDS; i++)
-    {
-        for(int j = 0; j< totalBedCap[i];j++)
-        {
-            fprintf(file, "%d ", bedOccupancy[i][j]);
-        }
-        fprintf(file, "\n");
-    }
-
-    fclose(file);
-}
-
-//Load bed status Function
-void loadBedStatus()
-{
-    FILE *file;
-
-    file = fopen("beds_status.txt", "r");
-
-    if (file == NULL)
-    {
-        return;
-    }
-
-    for(int i =0; i< NUM_WARDS;i++)
-    {
-        for(int j = 0; j <totalBedCap[i];j++)
-        {
-            fscanf(file, "%d", &bedOccupancy[i][j]);
-        }
-    }
-    fclose(file);
-}
 
 //Saving Patient Record Function
 void savePatientRecord()

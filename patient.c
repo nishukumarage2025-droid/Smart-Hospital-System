@@ -24,6 +24,8 @@ extern float finalBill[MAX_PATIENTS];
 extern int bedID[MAX_PATIENTS];
 extern char specialtyName[NUM_SPECIALTIES][50];
 extern char wardName[NUM_WARDS][50];
+extern int specialtyQueue[NUM_SPECIALTIES];
+extern int consultationTime[NUM_SPECIALTIES];
 
 //Registration Function
 void registerPatient()
@@ -148,6 +150,18 @@ void registerPatient()
     patientCount++;
 
 }
+
+
+//Waiting time Calculation Function
+void calculateWaitingTime(int index)
+{
+    waitingTime[index] =
+         specialtyQueue[specialtyID[index]- 1] * consultationTime[specialtyID[index]- 1];
+
+    specialtyQueue[specialtyID[index] - 1]++;
+}
+
+
 
 
 //Priority Function
