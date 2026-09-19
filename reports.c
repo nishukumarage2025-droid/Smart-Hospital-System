@@ -19,6 +19,10 @@ extern char wardName [NUM_WARDS][50];
 //Report Generation Function
 void generateReports()
 {
+    printf("\n==================================================\n");
+    printf("                 HOSPITAL REPORTS\n");
+    printf("==================================================\n\n");
+
     int normal = 0;
     int urgent = 0;
     int critical = 0;
@@ -61,15 +65,15 @@ void generateReports()
         }
     }
 
-    printf("\n   Highest-Paying Patient\n");
-    printf("--------------------------------\n");
+    printf("\nHighest-Paying Patient\n");
+    printf("--------------------------------------------------\n");
     printf("Patient Name      : %s\n", patientName[highestPatient]);
     printf("Total Bill        : ");
     formatMoney(finalBill[highestPatient]);
-    printf("\n");
+    printf("\n\n");
 
-    printf("\n   Bed Occupancy Report   \n");
-    printf("--------------------------------\n");
+    printf("\nBed Occupancy Report   \n");
+    printf("--------------------------------------------------\n");
 
     for(int i = 0;i < NUM_WARDS;i++)
     {
@@ -87,18 +91,18 @@ void generateReports()
         printf("%s : %.1f%% occupied\n", wardName[i], occupancyPercentage);
     }
 
-    printf("\n  Patient Registration Summary\n");
-    printf("---------------------------------\n");
-    printf("Total Patients Registered : %d\n", patientCount);
+    printf("\nPatient Registration Summary\n");
+    printf("---------------------------------------------------\n");
+    printf("Total Patients Registered : %d\n\n", patientCount);
 
-    printf("\n  Patient Count by Urgency\n");
-    printf("---------------------------------\n");
+    printf("\nPatient Count by Urgency\n");
+    printf("---------------------------------------------------\n");
     printf("Normal Patients   : %d\n", normal);
     printf("Urgent Patients   : %d\n", urgent);
-    printf("Critical Patients : %d\n", critical);
+    printf("Critical Patients : %d\n\n", critical);
 
-    printf("\n      Financial Summary       \n");
-    printf("---------------------------------\n");
+    printf("\nFinancial Summary       \n");
+    printf("---------------------------------------------------\n");
     printf("Total Revenue     : ");
     formatMoney(totalRevenue);
     printf("\n");
