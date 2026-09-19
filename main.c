@@ -90,10 +90,15 @@ void registerPatient()
 
 
     //waiting time and queue
+
     waitingTime[patientCount]= specialtyQueue[specialtyID[patientCount]-1] * consultationTime[specialtyID[patientCount]-1];
 
     specialtyQueue[specialtyID[patientCount]-1]++;
 
+
+
+
+    //
     printf("Is the patient admitted? (1-Yes,0-No): ");
     scanf("%d",&admitted[patientCount]);
 
