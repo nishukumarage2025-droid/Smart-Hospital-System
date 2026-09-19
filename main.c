@@ -9,7 +9,7 @@
 
 //Prototypes
 void registerPatient();
-void allocateBed();
+int allocateBed();
 void displayPatients();
 void priorityPatients();
 void generateReports();
@@ -18,6 +18,9 @@ void saveBedStatus();
 void loadBedStatus();
 void savePatientRecord();
 void loadPatientID();
+void calculateWaitingTime(int index);
+void calculateBilling(int index);
+void displayBedAvailability();
 
 
 //Arrays
@@ -91,11 +94,7 @@ void registerPatient()
 
     //waiting time and queue
 
-    waitingTime[patientCount]= specialtyQueue[specialtyID[patientCount]-1] * consultationTime[specialtyID[patientCount]-1];
-
-    specialtyQueue[specialtyID[patientCount]-1]++;
-
-
+    calculateWaitingTime(patientCount);
 
 
     //
@@ -134,65 +133,112 @@ void registerPatient()
         daysAdmitted[patientCount]=0;
     }
 
-    //base fee calculation
-    baseFee[patientCount] = consultationFee[specialtyID[patientCount]-1];
+    //Billing Calculations
+    calculateBilling(patientCount);
 
-    //Surcharge calculation
-    if(urgencyLevel[patientCount]== 1)
-    {
-        surCharge[patientCount]= 0;
-    }
-    else if (urgencyLevel[patientCount]== 2)
-    {
-        surCharge[patientCount]= baseFee[patientCount]*20/100;
-    }
-    else
-    {
-        surCharge[patientCount]= baseFee[patientCount]*50/100;
-    }
 
-    //Ward cost calculation
-    if (admitted[patientCount]==1)
-    {
-        wardCost[patientCount]= daysAdmitted[patientCount] * dailyBedRate[wardID[patientCount]-1];
-    }
-    else
-    {
-        wardCost[patientCount]=0;
-    }
-    //Gross Total calculation
-    grossTotal[patientCount] = baseFee[patientCount] + surCharge[patientCount]+wardCost[patientCount];
-
-    //Age subsidy
-    if (patientAge[patientCount]< 5 || patientAge[patientCount]> 65)
-    {
-        discount[patientCount]= grossTotal[patientCount]*15.0/100.0;
-    }
-    else
-    {
-        discount[patientCount]=0;
-    }
-
-    //Final bill calculation
-    finalBill[patientCount]= grossTotal[patientCount]- discount[patientCount];
 
     while (getchar()!= '\n');
 
     patientID[patientCount] = nextPatientID;
     nextPatientID++;
-
+    //Allocate bed
     if (admitted[patientCount]==1)
     {
-        allocateBed();
+        if (allocateBed()== 0)
+        {
+            admitted[patientCount] = 0;
+            wardID[patientCount] = 0;
+            daysAdmitted[patientCount]= 0;
+            wardCost[patientCount] = 0;
+        }
     }
+
+    //new bug fix
+    if(admitted[patientCount]== 0)
+    {
+        wardCost[patientCount] = 0;
+
+        grossTotal[patientCount] = baseFee[patientCount] + surCharge[patientCount];
+
+        if(patientAge[patientCount] < 5 || patientAge[patientCount] > 65)
+        {
+            discount[patientCount] = grossTotal[patientCount] * 15.0 / 100.0;
+        }
+        else
+        {
+            discount[patientCount] = 0;
+        }
+
+        finalBill[patientCount] = grossTotal[patientCount] - discount[patientCount];
+    }
+
+
     savePatientRecord();
 
     patientCount++;
 
 }
 
+//Waiting time Calculation Function
+void calculateWaitingTime(int index)
+{
+    waitingTime[index] =
+         specialtyQueue[specialtyID[index]- 1] * consultationTime[specialtyID[index]- 1];
+
+    specialtyQueue[specialtyID[index] - 1]++;
+}
+
+//Bill Calculation Function
+void calculateBilling(int index)
+{
+    //Base fee
+    baseFee[index] = consultationFee[specialtyID[index] - 1];
+
+    //Emergency Surcharge
+    if (urgencyLevel[index] == 1)
+    {
+        surCharge[index] = 0;
+    }
+    else if(urgencyLevel[index] == 2)
+    {
+        surCharge[index] = baseFee[index] * 20 / 100;
+    }
+    else
+    {
+        surCharge[index] = baseFee[index] * 50 / 100;
+    }
+
+    //Ward Cost
+    if(admitted[index] == 1)
+    {
+        wardCost[index] = daysAdmitted[index] * dailyBedRate[wardID[index] - 1];
+    }
+    else
+    {
+        wardCost[index] = 0;
+    }
+
+    //Gross Total
+    grossTotal[index] = baseFee[index] + surCharge[index] + wardCost[index];
+
+    //Age Subsidy Discount
+    if (patientAge[index] < 5 || patientAge[index] > 65)
+    {
+        discount[index] = grossTotal[index] * 15.0 / 100.0;
+    }
+    else
+    {
+        discount[index] = 0;
+    }
+
+    //Final Bill
+    finalBill[index] = grossTotal[index] - discount[index];
+}
+
+
 //Bed allocate function
-void allocateBed()
+int allocateBed()
 {
     int wardIndex = wardID[patientCount] - 1;
     int bedIndex;
@@ -213,10 +259,79 @@ void allocateBed()
     if (bedFound== 0)
     {
         printf("No Beds Available in the Selected Ward!\n");
+        return 0;
     }
 
+    return 1;
 
 }
+
+//Display Bed Availability function
+void displayBedAvailability()
+{
+    printf("\n==================================================\n");
+    printf("                BED AVAILABILITY\n");
+    printf("\n==================================================\n");
+    printf("O = Available    X = Occupied\n");
+
+    for(int i = 0; i< NUM_WARDS; i++)
+    {
+        printf("\n%s\n", wardName[i]);
+        printf("\n--------------------------------------------------\n");
+
+        int rows;
+
+        if (totalBedCap[i]> 10)
+        {
+            rows = 2;
+        }
+        else
+        {
+            rows = 1;
+        }
+
+        for(int row = 0; row < rows; row++)
+        {
+            int start = row * 10;
+            int end = start + 10;
+
+            if(end > totalBedCap[i])
+            {
+                end = totalBedCap[i];
+            }
+
+            printf("      ");
+
+            for(int j = start; j < end;j++)
+            {
+                printf("%02d ", j+1);
+            }
+
+            printf("\n");
+
+            printf("      ");
+
+            for(int j = start; j < end; j++)
+            {
+                if(bedOccupancy[i][j] == 0)
+                {
+                    printf(" O ");
+                }
+                else
+                {
+                    printf(" X ");
+                }
+            }
+            printf("\n\n");
+        }
+
+
+
+
+    }
+    printf("\n==================================================\n");
+}
+
 
 //display function
 void displayPatients()
@@ -445,6 +560,10 @@ void generateReports()
         printf("%s : %.1f%% occupied\n", wardName[i], occupancyPercentage);
     }
 
+    printf("\n  Patient Registration Summary\n");
+    printf("---------------------------------\n");
+    printf("Total Patients Registered : %d\n", patientCount);
+
     printf("\n  Patient Count by Urgency\n");
     printf("---------------------------------\n");
     printf("Normal Patients   : %d\n", normal);
@@ -599,19 +718,25 @@ int main()
     loadBedStatus();
     loadPatientID();
 
-    while(choice != 4)
+    while(choice != 5)
     {
         printf("\n=============================================\n");
         printf("      WELCOME TO SMART HOSPITAL SYSTEM!        \n");
         printf("=============================================\n");
         printf("1. Register Patient\n");
         printf("2. Display Patients\n");
-        printf("3. Generate Reports\n");
-        printf("4. Exit\n");
+        printf("3. Bed Availability\n");
+        printf("4. Generate Reports\n");
+        printf("5. Exit\n");
         printf("=============================================\n");
 
         printf("Enter Your Choice: ");
-        scanf("%d", &choice);
+        if (scanf("%d", &choice) != 1)
+        {
+            printf("Invalid Input! Please enter a number.\n");
+            while(getchar() != '\n');
+            continue;
+        }
 
         switch(choice)
         {
@@ -624,9 +749,12 @@ int main()
               displayPatients();
               break;
            case 3:
-              generateReports();
+              displayBedAvailability();
               break;
            case 4:
+              generateReports();
+              break;
+           case 5:
               printf("Exiting the system...\n");
               break;
 
