@@ -31,9 +31,25 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="billing.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="billing.h" />
+		<Unit filename="hospital.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="hospital.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="patient.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="patient.h" />
+		<Unit filename="reports.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="reports.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
